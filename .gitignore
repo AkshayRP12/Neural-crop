@@ -14,3 +14,7 @@ env/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Ignore massive AI models so Git Push is fast
+*.keras
+*.joblib
