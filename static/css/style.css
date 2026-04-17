@@ -1,0 +1,484 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ============================================
+   ROOT TOKENS
+   ============================================ */
+:root {
+    --green:   #22c55e;
+    --green-dim: #16a34a;
+    --teal:    #2dd4bf;
+    --blue:    #3b82f6;
+    --amber:   #f59e0b;
+    --bg:      #060d1a;
+    --surface: rgba(255,255,255,0.04);
+    --border:  rgba(255,255,255,0.08);
+    --text:    #e2e8f0;
+    --muted:   #94a3b8;
+}
+
+/* Flashing warning animation for temperature alerts */
+@keyframes pulse-warning {
+    0%, 100% { opacity: 1; box-shadow: 0 0 10px rgba(220, 38, 38, 0.3); }
+    50%      { opacity: 0.85; box-shadow: 0 0 25px rgba(220, 38, 38, 0.6); }
+}
+
+/* ============================================
+   BASE
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #1e3a2f; border-radius: 99px; }
+
+/* ============================================
+   NAVBAR — Neural Crop
+   ============================================ */
+.navbar {
+    background: rgba(6, 13, 26, 0.85) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(34, 197, 94, 0.15);
+    padding: 0.85rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+/* Neural Crop icon — SVG leaf replaced by CSS neural node */
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--green), var(--teal));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 16px rgba(34, 197, 94, 0.45);
+    flex-shrink: 0;
+}
+
+.brand-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(90deg, var(--green), var(--teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+}
+
+.brand-tagline {
+    font-size: 0.65rem;
+    color: var(--muted);
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    -webkit-text-fill-color: var(--muted);
+}
+
+.nav-status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+    animation: blink 1.8s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--green); }
+    50%       { opacity: 0.3; box-shadow: none; }
+}
+
+.nav-version {
+    font-size: 0.75rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 2px 10px;
+}
+
+/* ============================================
+   HERO — Animated background
+   ============================================ */
+.carousel-item {
+    width: 100vw;
+    min-height: 95vh;
+    color: white;
+    background-image:
+        linear-gradient(160deg, rgba(34,197,94,0.25) 0%, rgba(6,13,26,0.92) 60%),
+        url('../images/crop_background1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    animation: bgCycle 30s ease-in-out infinite;
+    position: relative;
+}
+
+/* Subtle noise overlay for texture */
+.carousel-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes bgCycle {
+    0%   { background-image: linear-gradient(160deg, rgba(34,197,94,0.25) 0%, rgba(6,13,26,0.92) 60%), url('../images/crop_background1.jpg'); }
+    25%  { background-image: linear-gradient(160deg, rgba(59,130,246,0.25) 0%, rgba(6,13,26,0.92) 60%), url('../images/crop_background2.jpg'); }
+    50%  { background-image: linear-gradient(160deg, rgba(245,158,11,0.20) 0%, rgba(6,13,26,0.92) 60%), url('../images/crop_background3.jpg'); }
+    75%  { background-image: linear-gradient(160deg, rgba(45,212,191,0.20) 0%, rgba(6,13,26,0.92) 60%), url('../images/crop_background4.jpg'); }
+    100% { background-image: linear-gradient(160deg, rgba(34,197,94,0.25) 0%, rgba(6,13,26,0.92) 60%), url('../images/crop_background1.jpg'); }
+}
+
+.carousel-text-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 5vh 1rem 4vh;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   HERO TITLE
+   ============================================ */
+.carousel-text-title {
+    font-weight: 900;
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    letter-spacing: -2px;
+    line-height: 1.05;
+    background: linear-gradient(100deg, #ffffff 0%, var(--green) 50%, var(--teal) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+    color: var(--muted);
+    font-size: 1.05rem;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+/* ============================================
+   GLASSMORPHISM PANELS
+   ============================================ */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-panel:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 16px 48px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Panel header accents */
+.glass-panel h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+/* ============================================
+   SECTION HEADERS inside panels
+   ============================================ */
+.panel-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--green);
+    margin-bottom: 0.4rem;
+}
+
+/* ============================================
+   UPLOAD BUTTON
+   ============================================ */
+.btn-neural {
+    background: linear-gradient(135deg, var(--green-dim), var(--green));
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 0.65rem 1.8rem;
+    border-radius: 99px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 20px rgba(34, 197, 94, 0.35);
+    font-size: 0.95rem;
+}
+
+.btn-neural:hover {
+    background: linear-gradient(135deg, var(--green), var(--teal));
+    box-shadow: 0 6px 28px rgba(34, 197, 94, 0.55);
+    transform: translateY(-1px);
+    color: #fff;
+}
+
+.btn-neural:active { transform: translateY(0); }
+
+/* Snapshot button */
+.btn-snapshot-custom {
+    background: linear-gradient(135deg, #d97706, var(--amber));
+    border: none;
+    color: #000;
+    font-weight: 700;
+    border-radius: 99px;
+    padding: 0.65rem 1.4rem;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35);
+    width: 100%;
+}
+
+.btn-snapshot-custom:hover {
+    box-shadow: 0 6px 28px rgba(245, 158, 11, 0.55);
+    transform: translateY(-1px);
+    color: #000;
+}
+
+/* ============================================
+   FILE INPUT
+   ============================================ */
+.form-control-neural {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control-neural:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
+    background: rgba(255,255,255,0.07);
+    color: var(--text);
+}
+
+/* ============================================
+   SENSOR SLIDERS
+   ============================================ */
+.form-range::-webkit-slider-thumb {
+    background: var(--green);
+    box-shadow: 0 0 8px rgba(34,197,94,0.6);
+}
+.form-range::-webkit-slider-runnable-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 99px;
+}
+
+/* ============================================
+   IOT DASHBOARD
+   ============================================ */
+.iot-dashboard {
+    width: 90%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ============================================
+   STAT CARDS
+   ============================================ */
+.stat-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 18px;
+    padding: 1.5rem 1.2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Glow accent line at top */
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before { opacity: 1; }
+
+.stat-card:hover {
+    background: rgba(34,197,94,0.06);
+    border-color: rgba(34,197,94,0.2);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(34,197,94,0.1);
+}
+
+.stat-card h4 {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card h2 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
+}
+
+/* ============================================
+   LIVE BADGE & PULSE
+   ============================================ */
+.live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(239,68,68,0.12);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #f87171;
+    border-radius: 99px;
+    padding: 3px 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.live-dot {
+    width: 7px;
+    height: 7px;
+    background: #ef4444;
+    border-radius: 50%;
+    animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); opacity: 1; }
+    50%       { box-shadow: 0 0 0 6px rgba(239,68,68,0); opacity: 0.7; }
+}
+
+/* Legacy pulse-badge (spinner on waiting state) */
+.pulse-badge {
+    animation: pulse-red 2s infinite;
+}
+
+/* ============================================
+   TIMESTAMP CHIP
+   ============================================ */
+.timestamp-chip {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 4px 14px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+/* ============================================
+   RESULT CARD
+   ============================================ */
+.result-image {
+    max-width: 100%;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.08);
+    transition: transform 0.4s ease;
+}
+
+.result-image:hover { transform: scale(1.02); }
+
+/* ============================================
+   ALERT MODERN
+   ============================================ */
+.alert-modern {
+    border-radius: 14px;
+    border: none;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    backdrop-filter: blur(6px);
+}
+
+/* ============================================
+   FORM BOX
+   ============================================ */
+.form-box {
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ============================================
+   DIVIDER
+   ============================================ */
+.neural-divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    margin: 1rem 0;
+}
+
+/* ============================================
+   FOOTER BAR (optional, inside page bottom)
+   ============================================ */
+.footer-bar {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+}
+
+.footer-bar span {
+    color: var(--green);
+    font-weight: 600;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .carousel-text-title { font-size: 2rem; letter-spacing: -1px; }
+    .stat-card h2 { font-size: 2rem; }
+    .iot-dashboard { width: 95%; }
+}

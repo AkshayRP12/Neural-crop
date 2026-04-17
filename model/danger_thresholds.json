@@ -1,0 +1,52 @@
+{
+  "Bacterial_Spot": {
+    "temp": 29.6,
+    "hum": 87.5,
+    "soil": 77.5
+  },
+  "Early_Blight": {
+    "temp": 27.0,
+    "hum": 81.0,
+    "soil": 67.5
+  },
+  "Late_Blight": {
+    "temp": 20.5,
+    "hum": 94.0,
+    "soil": 87.5
+  },
+  "Leaf_Mold": {
+    "temp": 25.0,
+    "hum": 89.0,
+    "soil": 77.5
+  },
+  "Septoria_Leaf_Spot": {
+    "temp": 23.4,
+    "hum": 91.0,
+    "soil": 82.5
+  },
+  "Spider_Mites": {
+    "temp": 33.0,
+    "hum": 50.0,
+    "soil": 50.0
+  },
+  "Target_Spot": {
+    "temp": 27.0,
+    "hum": 89.0,
+    "soil": 77.5
+  },
+  "Yellow_Leaf_Curl_Virus": {
+    "temp": 32.0,
+    "hum": 68.0,
+    "soil": 61.0
+  },
+  "Mosaic_Virus": {
+    "temp": 27.0,
+    "hum": 78.0,
+    "soil": 67.5
+  },
+  "Healthy": {
+    "temp": 99,
+    "hum": 99,
+    "soil": 99
+  }
+}

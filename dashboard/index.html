@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Crop — AI-Powered Plant Disease Detection</title>
+    <meta name="description" content="Field-deployable IoT crop disease detection using deep learning and multi-sensor fusion.">
+
+    <!-- Favicon: inline leaf emoji via SVG data URI -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+
+<!-- =============================================
+     NAVBAR
+     ============================================= -->
+<nav class="navbar navbar-expand-lg" data-bs-theme="dark">
+    <div class="container-fluid px-4">
+
+        <!-- Brand -->
+        <a class="brand-logo navbar-brand" href="#">
+            <div class="brand-icon">🌿</div>
+            <div>
+                <div class="brand-name">Neural Crop</div>
+                <div class="brand-tagline">IoT Disease Intelligence</div>
+            </div>
+        </a>
+
+        <!-- Right side chips -->
+        <div class="d-flex align-items-center gap-3 ms-auto">
+            <span class="nav-version d-none d-md-inline">v2.0 Field</span>
+            <span>
+                <span class="nav-status-dot"></span>
+                <span style="font-size:0.78rem; color: #94a3b8;">System Online</span>
+            </span>
+        </div>
+
+    </div>
+</nav>
+
+
+<!-- =============================================
+     HERO / MAIN CONTENT
+     ============================================= -->
+<div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="carousel-text-wrapper">
+
+                <!-- Hero Heading -->
+                <h1 class="carousel-text-title text-center">Autonomous Crop Protection</h1>
+                <p class="hero-subtitle">Scan, detect and neutralize plant disease — powered by edge AI & live sensor fusion.</p>
+
+                <!-- ── SINGLE PANEL: Manual Upload ── -->
+                <div class="row w-100 mx-auto g-4 justify-content-center" style="max-width: 700px;">
+                    <div class="col-md-10">
+                        <div class="glass-panel p-4 h-100 d-flex flex-column justify-content-center">
+                            <p class="panel-label">🔬 Manual Deep-Scan</p>
+                            <h3 class="mb-1 text-white">Upload a Leaf Image</h3>
+                            <p class="text-white-50 small mb-4">Upload any plant leaf photo and the CNN will classify the disease in under a second.</p>
+                            <form action="/upload/" method="POST" enctype="multipart/form-data">
+                                <input
+                                    id="leaf-upload"
+                                    type="file"
+                                    accept="image/png, image/jpeg"
+                                    name="img"
+                                    class="form-control form-control-neural mb-3"
+                                    required
+                                >
+                                <button type="submit" class="btn btn-neural w-100">
+                                    ⚡ Upload &amp; Analyze
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PANEL ROW -->
+
+
+                <!-- ── MANUAL UPLOAD RESULT ── -->
+                {% if result %}
+                <div class="result-container mt-4" style="max-width: 1100px; width: 90%; margin-left: auto; margin-right: auto;">
+                    <div class="glass-panel p-4 d-flex align-items-center gap-4 flex-wrap flex-md-nowrap">
+                        <div style="flex: 1; min-width: 200px;">
+                            <img src="{{ imagepath }}" alt="Uploaded leaf image" class="result-image" style="max-height:240px; width:100%; object-fit:cover;">
+                        </div>
+                        <div class="text-start text-white" style="flex: 2;">
+                            <p class="panel-label">🧠 CNN Prediction</p>
+                            <h3 class="fw-bold mb-2"
+                                style="background: linear-gradient(90deg,#22c55e,#2dd4bf); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+                                {{ prediction['name'] }}
+                            </h3>
+                            <hr class="neural-divider">
+                            <p class="opacity-75 small">
+                                <strong>What it means:</strong><br>
+                                {% if 'healthy' in prediction['name'].lower() %}
+                                    The plant appears completely healthy — no disease or stress detected.
+                                {% else %}
+                                    The plant is likely under <em>{{ prediction['name'].replace('___', ' ') }}</em> disease stress.
+                                {% endif %}
+                            </p>
+                            <p class="opacity-75 small mb-0">
+                                {% if disease_info %}
+                                <strong>What you can do:</strong><br>
+                                {{ disease_info.treatment }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Sensor Readings + Fused Alert (Manual Upload) -->
+                {% if live_temp is defined %}
+                <div class="glass-panel p-4 mt-3" style="max-width: 1100px; width: 90%; margin: 1rem auto 0;">
+                    <h5 class="fw-bold mb-3 text-white">📡 Live Sensor Readings at Time of Scan</h5>
+                    <div class="row text-center g-3 mb-3">
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <h4>🌡️ Temperature</h4>
+                                <h2 class="text-warning">{{ live_temp }} <small style="font-size:1.1rem;">°C</small></h2>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <h4>💧 Humidity</h4>
+                                <h2 class="text-info">{{ live_hum }} <small style="font-size:1.1rem;">%</small></h2>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <h4>🌱 Soil Moisture</h4>
+                                <h2 class="text-success">{{ live_soil }} <small style="font-size:1.1rem;">%</small></h2>
+                            </div>
+                        </div>
+                    </div>
+                    {% if alert_message %}
+                    <div class="alert alert-{{ alert_type }} alert-modern p-3" role="alert">
+                        <strong>🔗 Sensor-Fused Insight:</strong> {{ alert_message }}
+                    </div>
+                    {% endif %}
+                    {% if sensor_prediction %}
+                    <div class="stat-card mt-3">
+                        <p class="panel-label">🌡️ Random Forest Prediction (Based on Sensor Data)</p>
+                        <h4 class="fw-bold" style="color: #f59e0b;">{{ sensor_prediction.disease.replace('_', ' ') }}</h4>
+                        <p class="small opacity-75 mb-1"><strong>Confidence:</strong> {{ sensor_prediction.confidence }}%</p>
+                        <p class="small opacity-75 mb-0"><strong>Recommended Treatment:</strong> {{ sensor_prediction.treatment }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Disease Intelligence Report (Manual Upload) -->
+                {% if disease_info %}
+                <div class="glass-panel p-4 mt-3" style="max-width: 1100px; width: 90%; margin: 1rem auto 0;">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <h5 class="fw-bold mb-0 text-white">📋 Disease Intelligence Report</h5>
+                        <span class="badge {% if disease_info.severity == 'Critical' %}bg-danger{% elif disease_info.severity == 'High' %}bg-warning text-dark{% elif disease_info.severity == 'Moderate' %}bg-info{% else %}bg-success{% endif %}">
+                            {{ disease_info.severity }}
+                        </span>
+                    </div>
+                    <div class="small opacity-75 mb-2">
+                        <strong>Danger Thresholds:</strong> 🌡️ {{ disease_info.thresholds.temp }}°C | 💧 {{ disease_info.thresholds.hum }}% | 🌱 {{ disease_info.thresholds.soil }}%
+                    </div>
+                    <div class="small opacity-75 mb-3">
+                        <strong>Ideal:</strong> {{ disease_info.ideal_conditions }} &nbsp;|&nbsp;
+                        <strong>Trigger:</strong> {{ disease_info.trigger_conditions }}
+                    </div>
+
+                    {% if disease_info.is_critical %}
+                    <div class="alert alert-danger alert-modern p-3 mb-3" role="alert" style="animation: pulse-warning 1s infinite;">
+                        <strong>⚠️ SENSOR ALERT:</strong> {{ disease_info.warnings | join(' | ') }}. Treatment: {{ disease_info.treatment }}
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-danger mb-2">⚠️ Potential Risks</h6>
+                            <ul class="list-unstyled small opacity-75">
+                                {% for risk in disease_info.risks %}
+                                <li>• {{ risk }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-success mb-2">💊 Remedies</h6>
+                            <ul class="list-unstyled small opacity-75">
+                                {% for remedy in disease_info.remedies %}
+                                <li>✅ {{ remedy }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Plant Profile Card (Manual Upload) -->
+                {% if plant_profile %}
+                <div class="glass-panel p-4 mt-3" style="max-width: 1100px; width: 90%; margin: 1rem auto 0;">
+                    <h4 class="fw-bold mb-3" style="color:#34d399;">🌿 Plant Intelligence Profile — {{ plant_profile.plant_name }}</h4>
+                    <p class="text-white-50 small mb-3"><em>{{ plant_profile.scientific_name }}</em></p>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="stat-card text-center">
+                                <h4>🌡️ Temperature</h4>
+                                <div class="text-warning fw-bold">Ideal: {{ plant_profile.ideal_temp }}</div>
+                                <div class="small mt-1">{{ plant_profile.temp_status }} {{ plant_profile.temp_detail }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card text-center">
+                                <h4>💧 Humidity</h4>
+                                <div class="text-info fw-bold">Ideal: {{ plant_profile.ideal_humidity }}</div>
+                                <div class="small mt-1">{{ plant_profile.hum_status }} {{ plant_profile.hum_detail }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card text-center">
+                                <h4>🌱 Soil Moisture</h4>
+                                <div class="text-success fw-bold">Ideal: {{ plant_profile.ideal_soil }}</div>
+                                <div class="small mt-1">{{ plant_profile.soil_status }} {{ plant_profile.soil_detail }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h6 class="text-white fw-bold mb-2">🛡️ Known Diseases for This Plant</h6>
+                            <ul class="list-unstyled small opacity-75">
+                                {% for disease in plant_profile.susceptible_diseases %}
+                                <li>• {{ disease.replace('___', ' → ').replace('_', ' ') }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-white fw-bold mb-2">💡 Growing Tips</h6>
+                            <ul class="list-unstyled small opacity-75">
+                                {% for tip in plant_profile.growing_tips %}
+                                <li>• {{ tip }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+
+                <!-- ── LIVE IOT DASHBOARD (Active) ── -->
+                <div id="iot-active" class="iot-dashboard glass-panel mt-5 p-4 p-md-5"
+                     style="display: {{ 'block' if iot_data and iot_data.has_data else 'none' }};">
+
+                    <!-- Dashboard Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <h2 class="mb-0 fw-bold" style="font-size:1.5rem;">📡 Live IoT Dashboard</h2>
+                            <span class="live-badge">
+                                <span class="live-dot"></span> LIVE
+                            </span>
+                        </div>
+                        <span id="iot-time" class="timestamp-chip">
+                            Last update: {{ iot_data.timestamp if iot_data else '—' }}
+                        </span>
+                    </div>
+
+                    <!-- Sensor Stat Cards -->
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <!-- SECTION 1: LIVE ENVIRONMENT SENSORS                     -->
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <div style="border-left: 4px solid #f59e0b; padding-left: 16px; margin-bottom: 28px;">
+                        <h4 class="fw-bold mb-3" style="color: #f59e0b; font-size: 1.15rem;">
+                            ① Live Environment Sensors <small class="opacity-50" style="font-size:0.75rem; font-weight:400;">— ESP32 DevKit + DHT11 + Soil Probe</small>
+                        </h4>
+                        <div class="row text-center g-3">
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <h4>🌡️ Temperature</h4>
+                                    <h2 id="iot-temp" class="text-warning">
+                                        {{ iot_data.temperature if iot_data else '--' }} <small style="font-size:1.1rem;">°C</small>
+                                    </h2>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <h4>💧 Humidity</h4>
+                                    <h2 id="iot-hum" class="text-info">
+                                        {{ iot_data.humidity if iot_data else '--' }} <small style="font-size:1.1rem;">%</small>
+                                    </h2>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <h4>🌱 Soil Moisture</h4>
+                                    <h2 id="iot-soil" class="text-success">
+                                        {{ iot_data.soil_moisture if iot_data else '--' }} <small style="font-size:1.1rem;">%</small>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <!-- SECTION 2: CAMERA + CNN VISUAL PREDICTION               -->
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <div style="border-left: 4px solid #22c55e; padding-left: 16px; margin-bottom: 28px;">
+                        <h4 class="fw-bold mb-3" style="color: #22c55e; font-size: 1.15rem;">
+                            ② Visual Disease Detection <small class="opacity-50" style="font-size:0.75rem; font-weight:400;">— ESP32-CAM + CNN (54,000 images trained)</small>
+                        </h4>
+
+                        <div class="d-flex align-items-start gap-4 flex-wrap flex-md-nowrap">
+                            <!-- Image -->
+                            <div style="flex: 1; min-width: 200px; text-align: center;">
+                                <img id="iot-img"
+                                    src="{{ iot_data.imagepath if iot_data else '' }}"
+                                    alt="ESP32-CAM capture"
+                                    class="result-image"
+                                    style="max-height: 280px; width: 100%; object-fit: cover; border-radius: 12px;">
+                            </div>
+
+                            <!-- Text results -->
+                            <div style="flex: 2;">
+                                <!-- Sensor-fused alert -->
+                                <div id="iot-alert"
+                                    class="alert alert-{{ iot_data.fused_alert_type if iot_data else 'info' }} alert-modern mb-3 p-3"
+                                    role="alert">
+                                    <strong>🔗 Sensor-Fused Insight:</strong>
+                                    <span id="iot-alert-msg">{{ iot_data.fused_alert_message if iot_data else '' }}</span>
+                                </div>
+
+                                <!-- Prediction card -->
+                                <div class="stat-card text-start">
+                                    <p class="panel-label">🧠 CNN Prediction</p>
+                                    <h3 id="iot-pred-title" class="fw-bold mb-2"
+                                        style="background: linear-gradient(90deg,#22c55e,#2dd4bf); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+                                        {{ iot_data.prediction['name'] if iot_data and iot_data.prediction else '' }}
+                                    </h3>
+                                    <hr class="neural-divider">
+                                    <p id="iot-pred-name" class="opacity-75 small">
+                                        <strong>What it means:</strong>
+                                        {% if iot_data and iot_data.prediction %}
+                                            {% if 'healthy' in iot_data.prediction['name'].lower() %}
+                                                The plant appears completely healthy — no disease or stress detected.
+                                            {% elif 'no_plant_detected' in iot_data.prediction['name'].lower() %}
+                                                No plant was detected in the frame. Point the camera at a leaf.
+                                            {% else %}
+                                                The plant is likely under <em>{{ iot_data.prediction['name'].replace('___', ' ') }}</em> disease stress.
+                                            {% endif %}
+                                        {% endif %}
+                                    </p>
+                                    <p id="iot-pred-cure" class="opacity-75 small mb-0">
+                                        <strong>What you can do:</strong><br>
+                                        <span id="iot-pred-cure-text">
+                                            {% if iot_data and iot_data.cnn_disease %}
+                                                {{ iot_data.cnn_disease.treatment }}
+                                            {% endif %}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <!-- SECTION 3: SENSOR-BASED ML PREDICTION                   -->
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <div style="border-left: 4px solid #8b5cf6; padding-left: 16px; margin-bottom: 28px;">
+                        <h4 class="fw-bold mb-3" style="color: #8b5cf6; font-size: 1.15rem;">
+                            ③ Environmental AI Prediction <small class="opacity-50" style="font-size:0.75rem; font-weight:400;">— GradientBoosting ML (99.3% accuracy)</small>
+                        </h4>
+                        <div id="iot-sensor-pred" class="stat-card text-start" style="display:none;">
+                            <h4 id="iot-rf-disease" class="fw-bold" style="color: #f59e0b;"></h4>
+                            <p class="small opacity-75 mb-1"><strong>Confidence:</strong> <span id="iot-rf-conf"></span>%</p>
+                            <div class="d-flex gap-3 small opacity-75 mb-1 flex-wrap">
+                                <span>🌡️ <strong>Danger Temp:</strong> <span id="iot-rf-danger"></span>°C</span>
+                                <span>💧 <strong>Danger Humidity:</strong> <span id="iot-rf-danger-hum"></span>%</span>
+                                <span>🌱 <strong>Danger Soil:</strong> <span id="iot-rf-danger-soil"></span>%</span>
+                            </div>
+                            <p class="small opacity-75 mb-0"><strong>Recommended Treatment:</strong> <span id="iot-rf-treat"></span></p>
+                        </div>
+                        <div id="iot-sensor-pred-placeholder" class="stat-card text-start opacity-50">
+                            <p class="small mb-0">Waiting for sensor data...</p>
+                        </div>
+                    </div>
+
+                    <!-- SENSOR WARNING / PREDICTIVE FORECAST BANNER -->
+                    <div id="iot-temp-warning" class="alert alert-danger alert-modern mt-3 p-3" role="alert"
+                         style="display:none; animation: pulse-warning 1s infinite;">
+                        <strong>⚠️ SENSOR ALERT:</strong>
+                        <span id="iot-warning-msg"></span>
+                    </div>
+
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <!-- SECTION 4: DISEASE INTELLIGENCE REPORT                  -->
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <div style="border-left: 4px solid #ef4444; padding-left: 16px; margin-bottom: 12px;">
+                        <h4 class="fw-bold mb-3" style="color: #ef4444; font-size: 1.15rem;">
+                            ④ Disease Intelligence Report <small class="opacity-50" style="font-size:0.75rem; font-weight:400;">— Knowledge Base + Risk Analysis</small>
+                        </h4>
+                        <div id="iot-disease-info" class="glass-panel p-4" style="display:none;">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <h5 class="fw-bold mb-0 text-white">📋 Full Report</h5>
+                                <span id="iot-severity-badge" class="badge bg-danger">Critical</span>
+                            </div>
+                            <div class="small opacity-75 mb-3">
+                                <strong>Ideal:</strong> <span id="iot-ideal-cond"></span> &nbsp;|&nbsp;
+                                <strong>Trigger:</strong> <span id="iot-trigger-cond"></span>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold text-danger mb-2">⚠️ Potential Risks</h6>
+                                    <ul id="iot-risks" class="list-unstyled small opacity-75"></ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold text-success mb-2">💊 Remedies</h6>
+                                    <ul id="iot-remedies" class="list-unstyled small opacity-75"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="iot-disease-info-placeholder" class="stat-card opacity-50" style="">
+                            <p class="small mb-0">Disease report will appear when a disease is detected.</p>
+                        </div>
+                    </div>
+
+                    <!-- Plant Intelligence Profile (IoT) -->
+                    <div id="iot-plant-profile" class="mt-4">
+                    {% if iot_data and iot_data.plant_profile %}
+                    {% set pp = iot_data.plant_profile %}
+                        <h4 class="fw-bold mb-3" style="color:#34d399;">🌿 Plant Intelligence Profile &mdash; {{ pp.plant_name }}</h4>
+                        <p class="text-white-50 small mb-3"><em>{{ pp.scientific_name }}</em></p>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4"><div class="stat-card text-center">
+                                <h4>🌡️ Temperature</h4>
+                                <div class="text-warning fw-bold">Ideal: {{ pp.ideal_temp }}</div>
+                                <div class="small mt-1">{{ pp.temp_status }} {{ pp.temp_detail }}</div>
+                            </div></div>
+                            <div class="col-md-4"><div class="stat-card text-center">
+                                <h4>💧 Humidity</h4>
+                                <div class="text-info fw-bold">Ideal: {{ pp.ideal_humidity }}</div>
+                                <div class="small mt-1">{{ pp.hum_status }} {{ pp.hum_detail }}</div>
+                            </div></div>
+                            <div class="col-md-4"><div class="stat-card text-center">
+                                <h4>🌱 Soil Moisture</h4>
+                                <div class="text-success fw-bold">Ideal: {{ pp.ideal_soil }}</div>
+                                <div class="small mt-1">{{ pp.soil_status }} {{ pp.soil_detail }}</div>
+                            </div></div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <h6 class="text-white fw-bold mb-2">🛡️ Known Diseases for This Plant</h6>
+                                <ul class="list-unstyled small opacity-75">
+                                    {% for d in pp.susceptible_diseases %}
+                                    <li>• {{ d.replace('___', ' → ').replace('_', ' ') }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-white fw-bold mb-2">💡 Growing Tips</h6>
+                                <ul class="list-unstyled small opacity-75">
+                                    {% for tip in pp.growing_tips %}
+                                    <li>• {{ tip }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                    </div>
+
+                </div>
+                <!-- END ACTIVE DASHBOARD -->
+
+
+                <!-- ── WAITING STATE ── -->
+                <div id="iot-waiting" class="iot-dashboard glass-panel mt-5 text-center p-5"
+                     style="display: {{ 'none' if iot_data and iot_data.has_data else 'block' }};">
+                    <div class="spinner-grow text-success mb-4 pulse-badge" role="status" style="width:3rem;height:3rem;"></div>
+                    <h2 class="fw-bold mb-2">📡 Establishing Link...</h2>
+                    <p class="text-white-50 fs-6">
+                        Waiting for ESP32-CAM to transmit over Wi-Fi.<br>
+                        Make sure your Flask server is running and the ESP32 is powered on.
+                    </p>
+                </div>
+
+            </div>
+            <!-- END carousel-text-wrapper -->
+        </div>
+    </div>
+</div>
+<!-- END carousel -->
+
+
+<!-- =============================================
+     FOOTER
+     ============================================= -->
+<div class="footer-bar">
+    <span>Neural Crop</span> &bull; IoT Plant Disease Detection &bull; 98% Accuracy across 39 classes
+</div>
+
+
+<!-- =============================================
+     SCRIPTS
+     ============================================= -->
+<script src="../static/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    /* ─────────────────────────────────────────────────────────
+       FAST SENSOR POLL — every 2 seconds
+       Updates Temp / Humidity / Soil cards in real-time
+       even between camera captures (e.g. lighter near DHT11)
+    ───────────────────────────────────────────────────────── */
+    setInterval(() => {
+        fetch('/api/live_sensors')
+            .then(r => r.json())
+            .then(data => {
+                if (!data || data.temperature === null) return;
+
+                // Show the IoT dashboard if sensors are live even before first image
+                document.getElementById('iot-waiting').style.display = 'none';
+                document.getElementById('iot-active').style.display  = 'block';
+
+                document.getElementById('iot-temp').innerHTML =
+                    parseFloat(data.temperature).toFixed(1) + ' <small style="font-size:1.1rem;">°C</small>';
+                document.getElementById('iot-hum').innerHTML =
+                    parseFloat(data.humidity).toFixed(1) + ' <small style="font-size:1.1rem;">%</small>';
+                document.getElementById('iot-soil').innerHTML =
+                    parseFloat(data.soil_moisture).toFixed(1) + ' <small style="font-size:1.1rem;">%</small>';
+
+                // Update sensor prediction live
+                if (data.sensor_prediction) {
+                    const sp = data.sensor_prediction;
+                    document.getElementById('iot-sensor-pred').style.display = 'block';
+                    const sensorPlaceholder = document.getElementById('iot-sensor-pred-placeholder');
+                    if (sensorPlaceholder) sensorPlaceholder.style.display = 'none';
+                    document.getElementById('iot-rf-disease').innerText = sp.disease.replace(/_/g, ' ');
+                    document.getElementById('iot-rf-conf').innerText = sp.confidence;
+                    document.getElementById('iot-rf-danger').innerText = sp.danger_temp;
+                    document.getElementById('iot-rf-danger-hum').innerText = sp.danger_hum;
+                    document.getElementById('iot-rf-danger-soil').innerText = sp.danger_soil;
+                    document.getElementById('iot-rf-treat').innerText = sp.treatment;
+
+                    // Warning banner
+                    const warningDiv = document.getElementById('iot-temp-warning');
+                    const warningMsg = document.getElementById('iot-warning-msg');
+                    if (sp.warning) {
+                        warningDiv.style.display = 'block';
+                        warningMsg.innerText = sp.warning;
+                        warningDiv.className = sp.warning_level === 'critical'
+                            ? 'alert alert-danger alert-modern mt-3 p-3'
+                            : 'alert alert-warning alert-modern mt-3 p-3';
+                        warningDiv.style.animation = 'pulse-warning 1s infinite';
+                    } else {
+                        warningDiv.style.display = 'none';
+                    }
+
+                    // Disease Intelligence Report
+                    const infoDiv = document.getElementById('iot-disease-info');
+                    if (sp.risks && sp.risks.length > 0) {
+                        infoDiv.style.display = 'block';
+                        const diseasePlaceholder = document.getElementById('iot-disease-info-placeholder');
+                        if (diseasePlaceholder) diseasePlaceholder.style.display = 'none';
+
+                        // Severity badge
+                        const badge = document.getElementById('iot-severity-badge');
+                        badge.innerText = sp.severity;
+                        badge.className = 'badge ' + (
+                            sp.severity === 'Critical' ? 'bg-danger' :
+                            sp.severity === 'High' ? 'bg-warning text-dark' :
+                            sp.severity === 'Moderate' ? 'bg-info' : 'bg-success'
+                        );
+
+                        // Conditions
+                        document.getElementById('iot-ideal-cond').innerText = sp.ideal_conditions;
+                        document.getElementById('iot-trigger-cond').innerText = sp.trigger_conditions;
+
+                        // Risks
+                        document.getElementById('iot-risks').innerHTML =
+                            sp.risks.map(r => `<li>• ${r}</li>`).join('');
+
+                        // Remedies
+                        document.getElementById('iot-remedies').innerHTML =
+                            sp.remedies.map(r => `<li>✅ ${r}</li>`).join('');
+                    } else {
+                        infoDiv.style.display = 'none';
+                    }
+                }
+
+                // CNN-locked disease warnings (based on camera-identified leaf)
+                if (data.cnn_disease) {
+                    const cd = data.cnn_disease;
+                    const warningDiv = document.getElementById('iot-temp-warning');
+                    const warningMsg = document.getElementById('iot-warning-msg');
+
+                    // Update thresholds to match CNN disease
+                    document.getElementById('iot-rf-danger').innerText = cd.thresholds.temp;
+                    document.getElementById('iot-rf-danger-hum').innerText = cd.thresholds.hum;
+                    document.getElementById('iot-rf-danger-soil').innerText = cd.thresholds.soil;
+
+                    if (cd.is_critical && cd.warnings.length > 0) {
+                        warningDiv.style.display = 'block';
+                        warningDiv.className = 'alert alert-danger alert-modern mt-3 p-3';
+                        warningDiv.style.animation = 'pulse-warning 1s infinite';
+                        
+                        if (cd.name === 'Healthy') {
+                            warningMsg.innerHTML = '<br><strong>PREDICTIVE FORECAST:</strong> The environment has become a breeding ground. ' + cd.warnings.join(' | ');
+                        } else {
+                            warningMsg.innerText = 'CRITICAL for ' + cd.name + ': ' + cd.warnings.join(' | ') + '. Treatment: ' + cd.treatment;
+                        }
+                    } else {
+                        warningDiv.style.display = 'none';
+                    }
+
+                    // Update disease info to CNN disease
+                    const infoDiv2 = document.getElementById('iot-disease-info');
+                    if (cd.risks && cd.risks.length > 0) {
+                        infoDiv2.style.display = 'block';
+                        const diseasePlaceholder2 = document.getElementById('iot-disease-info-placeholder');
+                        if (diseasePlaceholder2) diseasePlaceholder2.style.display = 'none';
+                        const badge = document.getElementById('iot-severity-badge');
+                        badge.innerText = cd.severity;
+                        badge.className = 'badge ' + (
+                            cd.severity === 'Critical' ? 'bg-danger' :
+                            cd.severity === 'High' ? 'bg-warning text-dark' :
+                            cd.severity === 'Moderate' ? 'bg-info' : 'bg-success'
+                        );
+                        document.getElementById('iot-ideal-cond').innerText = cd.ideal_conditions;
+                        document.getElementById('iot-trigger-cond').innerText = cd.trigger_conditions;
+                        document.getElementById('iot-risks').innerHTML = cd.risks.map(r => `<li>• ${r}</li>`).join('');
+                        document.getElementById('iot-remedies').innerHTML = cd.remedies.map(r => `<li>✅ ${r}</li>`).join('');
+                    }
+                }
+            })
+            .catch(() => {}); // Silently ignore if no sensor data yet
+    }, 2000);    /* ---- Auto-polling every 5s ---- */
+    let currentTimestamp = "{{ iot_data.timestamp if iot_data else '' }}";
+
+    setInterval(() => {
+        fetch('/api/latest_sensor_data')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.has_data || data.timestamp === currentTimestamp) return;
+                currentTimestamp = data.timestamp;
+
+                document.getElementById('iot-waiting').style.display = 'none';
+                document.getElementById('iot-active').style.display  = 'block';
+
+                document.getElementById('iot-time').innerText  = 'Last update: ' + data.timestamp;
+                document.getElementById('iot-temp').innerHTML  = data.temperature  + ' <small style="font-size:1.1rem;">°C</small>';
+                document.getElementById('iot-hum').innerHTML   = data.humidity      + ' <small style="font-size:1.1rem;">%</small>';
+                document.getElementById('iot-soil').innerHTML  = data.soil_moisture + ' <small style="font-size:1.1rem;">%</small>';
+                document.getElementById('iot-img').src         = data.imagepath;
+
+                // Alert box
+                const alertBox = document.getElementById('iot-alert');
+                alertBox.className = 'alert alert-' + data.fused_alert_type + ' alert-modern mb-3 p-3';
+                document.getElementById('iot-alert-msg').innerText = data.fused_alert_message;
+
+                // Prediction
+                if (data.prediction) {
+                    const pName     = data.prediction.name  || '';
+                    const pFormatted = pName.replace('___', ' ');
+
+                    document.getElementById('iot-pred-title').innerText = pName;
+
+                    document.getElementById('iot-pred-name').innerHTML =
+                        '<strong>What it means:</strong> ' +
+                        (pName.toLowerCase().includes('healthy')
+                            ? 'The plant appears completely healthy — no disease or stress detected.'
+                            : pName === 'No_Plant_Detected' 
+                                ? 'No plant was detected in the frame. Point the camera at a leaf.'
+                                : 'The plant is likely under <em>' + pFormatted + '</em> disease stress.');
+
+                    if (data.disease_info) {
+                        document.getElementById('iot-pred-cure-text').innerText = data.disease_info.treatment || '';
+                    }
+                } // <--- RESTORED THIS MISSING BRACE!
+
+                // Plant Intelligence Profile
+                const profileDiv = document.getElementById('iot-plant-profile');
+                if (data.plant_profile && profileDiv) {
+                    const pp = data.plant_profile;
+                    const diseaseList = (pp.susceptible_diseases || [])
+                        .map(d => `<li>• ${d.replace('___', ' → ').replace(/_/g, ' ')}</li>`).join('');
+                    const tipList = (pp.growing_tips || [])
+                        .map(t => `<li>• ${t}</li>`).join('');
+
+                    profileDiv.innerHTML = `
+                        <h4 class="fw-bold mb-3" style="color:#34d399;">🌿 Plant Intelligence Profile — ${pp.plant_name}</h4>
+                        <p class="text-white-50 small mb-3"><em>${pp.scientific_name}</em></p>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4"><div class="stat-card text-center">
+                                <h4>🌡️ Temperature</h4>
+                                <div class="text-warning fw-bold">Ideal: ${pp.ideal_temp}</div>
+                                <div class="small mt-1">${pp.temp_status} ${pp.temp_detail}</div>
+                            </div></div>
+                            <div class="col-md-4"><div class="stat-card text-center">
+                                <h4>💧 Humidity</h4>
+                                <div class="text-info fw-bold">Ideal: ${pp.ideal_humidity}</div>
+                                <div class="small mt-1">${pp.hum_status} ${pp.hum_detail}</div>
+                            </div></div>
+                            <div class="col-md-4"><div class="stat-card text-center">
+                                <h4>🌱 Soil Moisture</h4>
+                                <div class="text-success fw-bold">Ideal: ${pp.ideal_soil}</div>
+                                <div class="small mt-1">${pp.soil_status} ${pp.soil_detail}</div>
+                            </div></div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <h6 class="text-white fw-bold mb-2">🛡️ Known Diseases for This Plant</h6>
+                                <ul class="list-unstyled small opacity-75">${diseaseList}</ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-white fw-bold mb-2">💡 Growing Tips</h6>
+                                <ul class="list-unstyled small opacity-75">${tipList}</ul>
+                            </div>
+                        </div>`;
+                }
+            })
+            .catch(err => console.error('[Neural Crop] IoT poll error:', err));
+    }, 5000);
+</script>
+
+</body>
+</html>

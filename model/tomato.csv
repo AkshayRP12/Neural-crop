@@ -1,0 +1,12 @@
+Disease,Temperature_Min(°C),Temperature_Max(°C),Humidity_Min(%),Humidity_Max(%),Soil_Moisture_Min(%),Soil_Moisture_Max(%)
+
+Bacterial Spot,24,32,70,95,60,85
+Early Blight,20,30,60,90,50,75
+Late Blight,10,25,80,100,70,95
+Leaf Mold,18,28,75,95,60,85
+Septoria Leaf Spot,15,27,70,100,65,90
+Spider Mites,25,35,30,60,30,55
+Target Spot,20,30,75,95,60,85
+Yellow Leaf Curl Virus,25,35,40,80,40,70
+Mosaic Virus,20,30,50,90,50,75
+Healthy,18,27,50,70,40,65

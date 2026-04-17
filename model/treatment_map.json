@@ -1,0 +1,11 @@
+{
+  "Late_Blight": "Apply Metalaxyl fungicide immediately. Remove infected leaves.",
+  "Early_Blight": "Apply Mancozeb or Chlorothalonil. Remove lower infected leaves.",
+  "Bacterial_Spot": "Apply Copper-based bactericide. Avoid overhead watering.",
+  "Leaf_Mold": "Improve ventilation. Apply Chlorothalonil. Reduce watering.",
+  "Spider_Mites": "Spray Neem Oil or Abamectin. Increase humidity. Irrigate immediately.",
+  "Septoria": "Apply Mancozeb. Mulch around base. Remove infected leaves.",
+  "Yellow_Leaf_Curl": "No cure. Remove plant. Use insect nets. Apply Imidacloprid for whiteflies.",
+  "Mosaic_Virus": "No cure. Destroy plant. Sterilize tools with 10% bleach solution.",
+  "Healthy": "No action needed. Conditions are optimal for tomato growth."
+}

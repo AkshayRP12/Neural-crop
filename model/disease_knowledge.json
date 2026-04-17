@@ -1,0 +1,160 @@
+{
+  "Bacterial_Spot": {
+    "plant": "Tomato",
+    "severity": "High",
+    "risks": [
+      "If ignored, defoliation scales up leading to sunscald on fruit",
+      "Spreads rapidly in warm, rainy weather",
+      "Bacteria survive in seeds and crop debris"
+    ],
+    "remedies": [
+      "Use copper-based bactericides",
+      "Avoid overhead watering",
+      "Remove severely infected plants"
+    ],
+    "ideal_conditions": "24-32°C, 70-95% humidity, 60-85% soil moisture",
+    "trigger_conditions": "Temp approaches 30°C + Humidity nears 88% + Wet soil"
+  },
+  "Early_Blight": {
+    "plant": "Tomato",
+    "severity": "Moderate",
+    "risks": [
+      "If ignored, causes significant fruit drop and yield loss",
+      "Affects lower leaves first and moves upward",
+      "Lesions on stems can girdle the plant"
+    ],
+    "remedies": [
+      "Apply Mancozeb or Chlorothalonil",
+      "Remove infected lower leaves",
+      "Maintain adequate potassium levels"
+    ],
+    "ideal_conditions": "20-30°C, 60-90% humidity, 50-75% soil moisture",
+    "trigger_conditions": "Temp > 27°C + Humidity > 81% + Soil > 67%"
+  },
+  "Late_Blight": {
+    "plant": "Tomato",
+    "severity": "Critical",
+    "risks": [
+      "If ignored, absolute crop failure within a few days",
+      "Extremely infectious across entire farm",
+      "Makes all fruits rot with a foul odor"
+    ],
+    "remedies": [
+      "Apply Metalaxyl or systemic fungicides immediately",
+      "Destroy infected plants completely (do not compost)",
+      "Improve ventilation and plant spacing"
+    ],
+    "ideal_conditions": "10-25°C, 80-100% humidity, 70-95% soil moisture",
+    "trigger_conditions": "Cool temp < 20°C + Humidity > 94% + High soil moisture > 87%"
+  },
+  "Leaf_Mold": {
+    "plant": "Tomato",
+    "severity": "Moderate",
+    "risks": [
+      "If ignored, older foliage dies prematurely",
+      "Stunts the fruit growth significantly",
+      "High transmission in greenhouse environments"
+    ],
+    "remedies": [
+      "Increase air flow through the greenhouse",
+      "Apply protective fungicides like chlorothalonil",
+      "Minimize leaf wetness"
+    ],
+    "ideal_conditions": "18-28°C, 75-95% humidity, 60-85% soil moisture",
+    "trigger_conditions": "Temp > 25°C + Humidity > 89% + Soil > 77%"
+  },
+  "Septoria_Leaf_Spot": {
+    "plant": "Tomato",
+    "severity": "Moderate",
+    "risks": [
+      "If ignored, rapid defoliation heavily reduces vigor",
+      "Sunscald damages exposed fruit",
+      "Survives winter on weeds and debris"
+    ],
+    "remedies": [
+      "Remove diseased leaves immediately",
+      "Apply copper fungicidal sprays",
+      "Mulch base of plants to prevent soil splashing"
+    ],
+    "ideal_conditions": "15-27°C, 70-100% humidity, 65-90% soil moisture",
+    "trigger_conditions": "Temp > 23°C + High Humidity > 91% + Soil > 82%"
+  },
+  "Spider_Mites": {
+    "plant": "Tomato",
+    "severity": "High",
+    "risks": [
+      "If ignored, fine webbing suffocates leaves and they collapse",
+      "Populations explode in hot, dry weather within days",
+      "Stunts overall growth completely"
+    ],
+    "remedies": [
+      "Apply insecticidal soap, neem oil, or an acaricide",
+      "Mist plants with water to increase humidity",
+      "Water heavily to reduce drought stress that attracts mites"
+    ],
+    "ideal_conditions": "25-35°C, 30-60% humidity, 30-55% soil moisture",
+    "trigger_conditions": "Hot Temp > 33°C + DRY Humidity < 50% + DRY Soil < 50%"
+  },
+  "Target_Spot": {
+    "plant": "Tomato",
+    "severity": "High",
+    "risks": [
+      "If ignored, concentric dark lesions form on fruit making it unsellable",
+      "Leaves dry out and fall",
+      "Favors prolonged leaf wetness"
+    ],
+    "remedies": [
+      "Prune plants to ensure fast drying of foliage",
+      "Apply protective fungicides containing azoxystrobin",
+      "Use drip irrigation"
+    ],
+    "ideal_conditions": "20-30°C, 75-95% humidity, 60-85% soil moisture",
+    "trigger_conditions": "Temp > 27°C + High Humidity > 89% + Soil > 77%"
+  },
+  "Yellow_Leaf_Curl_Virus": {
+    "plant": "Tomato",
+    "severity": "Critical",
+    "risks": [
+      "If ignored, plant ceases all standard growth",
+      "No marketable fruit will be produced",
+      "Whiteflies spread this constantly to nearby crops"
+    ],
+    "remedies": [
+      "No chemical cure exists for infected plants",
+      "You must uproot and destroy infected plants immediately",
+      "Control whiteflies using reflective mulches and insecticides"
+    ],
+    "ideal_conditions": "25-35°C, 40-80% humidity, 40-70% soil moisture",
+    "trigger_conditions": "Temp > 32°C + Humidity > 68% + Soil > 61%"
+  },
+  "Mosaic_Virus": {
+    "plant": "Tomato",
+    "severity": "Critical",
+    "risks": [
+      "If ignored, mottled leaves reduce yield entirely",
+      "Virus easily transferred via hands or tools during pruning",
+      "Can persist in dead soil debris for years"
+    ],
+    "remedies": [
+      "Destroy all infected specimens immediately",
+      "Wash hands and sterilize clippers with 10% bleach",
+      "Do NOT smoke near plants as tobacco carries identical viruses"
+    ],
+    "ideal_conditions": "20-30°C, 50-90% humidity, 50-75% soil moisture",
+    "trigger_conditions": "Temp > 27°C + Humidity > 78% + Soil > 67%"
+  },
+  "Healthy": {
+    "plant": "Tomato",
+    "severity": "None",
+    "risks": [
+      "No risks present currently",
+      "Ensure conditions remain optimal"
+    ],
+    "remedies": [
+      "Ensure consistent watering schedule",
+      "Perform routine checks for early signs"
+    ],
+    "ideal_conditions": "18-27°C, 50-70% humidity, 40-65% soil moisture",
+    "trigger_conditions": "N/A"
+  }
+}
